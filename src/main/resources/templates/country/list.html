@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+
+<body>
+<div layout:fragment="content">
+
+    <div class="d-flex justify-content-between
+                align-items-center mb-4">
+        <h2 style="color: #c9a84c;">Countries</h2>
+        <a th:href="@{/countries/new}"
+           class="btn btn-primary-custom">
+            + Add New Country
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-dark table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Sign</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="country : ${countries}">
+                    <td th:text="${country.id}"></td>
+                    <td th:text="${country.name}"></td>
+                    <td th:text="${country.sign}"></td>
+                    <td>
+                        <a th:href="@{/countries/edit/
+                               {id}(id=${country.id})}"
+                           class="btn btn-sm btn-gold">
+                            Edit
+                        </a>
+                        <a th:href="@{/countries/delete/
+                               {id}(id=${country.id})}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm(
+                               'Are you sure?')">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
