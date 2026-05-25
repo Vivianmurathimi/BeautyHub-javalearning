@@ -1,4 +1,4 @@
-package com.beautyhub.beautyhubbackend.controller;
+package com.beautyhub.beautyhubbackend.controller.api;
 
 import com.beautyhub.beautyhubbackend.domain.Country;
 import com.beautyhub.beautyhubbackend.service.CountryService;

@@ -42,6 +42,12 @@ public class PersonService {
         Person existing = personRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(
                         "Person not found with id: " + id));
+        // Update Client fields
+        existing.setName(updatedPerson.getName());
+        existing.setAddress(updatedPerson.getAddress());
+        existing.setAmount(updatedPerson.getAmount());
+        existing.setCountry(updatedPerson.getCountry());
+
         existing.setPersonalId(updatedPerson.getPersonalId());
         return personRepository.save(existing);
     }
