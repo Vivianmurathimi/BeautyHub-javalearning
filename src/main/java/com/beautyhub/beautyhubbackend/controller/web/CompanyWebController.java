@@ -16,9 +16,10 @@ public class CompanyWebController {
     private final CountryService countryService;
     private final CountryRepository countryRepository;
 
-    public CompanyWebController(CompanyService companyService,
-                                CountryService countryService,
-                                CountryRepository countryRepository) {
+    public CompanyWebController(
+            CompanyService companyService,
+            CountryService countryService,
+            CountryRepository countryRepository) {
         this.companyService = companyService;
         this.countryService = countryService;
         this.countryRepository = countryRepository;
@@ -35,23 +36,26 @@ public class CompanyWebController {
     // SHOW ADD FORM
     @GetMapping("/new")
     public String showForm(Model model) {
-        model.addAttribute("company", new Company());
+        model.addAttribute("company",
+                new Company());
         model.addAttribute("countries",
                 countryService.findAll());
         return "company/form";
     }
 
-    // SAVE COMPANY
+    // SAVE OR UPDATE
     @PostMapping("/save")
-    public String save(@ModelAttribute Company company,
-                       @RequestParam(required = false)
-                       Long countryId) {
+    public String save(
+            @ModelAttribute Company company,
+            @RequestParam(required = false)
+            Long countryId) {
         if (countryId != null) {
             countryRepository.findById(countryId)
                     .ifPresent(company::setCountry);
         }
         if (company.getId() != null) {
-            companyService.update(company.getId(), company);
+            companyService.update(
+                    company.getId(), company);
         } else {
             companyService.save(company);
         }
@@ -60,17 +64,20 @@ public class CompanyWebController {
 
     // SHOW EDIT FORM
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id,
-                               Model model) {
+    public String showEditForm(
+            @PathVariable Long id,
+            Model model) {
         companyService.findById(id)
-                .ifPresent(c -> model.addAttribute("company", c));
+                .ifPresent(c ->
+                        model.addAttribute(
+                                "company", c));
         model.addAttribute("countries",
                 countryService.findAll());
         return "company/form";
     }
 
-    // DELETE COMPANY
-    @GetMapping("/delete/{id}")
+    // DELETE
+    @PostMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         companyService.deleteById(id);
         return "redirect:/companies";

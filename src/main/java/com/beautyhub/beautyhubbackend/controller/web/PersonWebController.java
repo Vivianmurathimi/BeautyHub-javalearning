@@ -16,9 +16,10 @@ public class PersonWebController {
     private final CountryService countryService;
     private final CountryRepository countryRepository;
 
-    public PersonWebController(PersonService personService,
-                               CountryService countryService,
-                               CountryRepository countryRepository) {
+    public PersonWebController(
+            PersonService personService,
+            CountryService countryService,
+            CountryRepository countryRepository) {
         this.personService = personService;
         this.countryService = countryService;
         this.countryRepository = countryRepository;
@@ -35,23 +36,26 @@ public class PersonWebController {
     // SHOW ADD FORM
     @GetMapping("/new")
     public String showForm(Model model) {
-        model.addAttribute("person", new Person());
+        model.addAttribute("person",
+                new Person());
         model.addAttribute("countries",
                 countryService.findAll());
         return "person/form";
     }
 
-    // SAVE PERSON
+    // SAVE OR UPDATE
     @PostMapping("/save")
-    public String save(@ModelAttribute Person person,
-                       @RequestParam(required = false)
-                       Long countryId) {
+    public String save(
+            @ModelAttribute Person person,
+            @RequestParam(required = false)
+            Long countryId) {
         if (countryId != null) {
             countryRepository.findById(countryId)
                     .ifPresent(person::setCountry);
         }
         if (person.getId() != null) {
-            personService.update(person.getId(), person);
+            personService.update(
+                    person.getId(), person);
         } else {
             personService.save(person);
         }
@@ -60,17 +64,20 @@ public class PersonWebController {
 
     // SHOW EDIT FORM
     @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id,
-                               Model model) {
+    public String showEditForm(
+            @PathVariable Long id,
+            Model model) {
         personService.findById(id)
-                .ifPresent(p -> model.addAttribute("person", p));
+                .ifPresent(p ->
+                        model.addAttribute(
+                                "person", p));
         model.addAttribute("countries",
                 countryService.findAll());
         return "person/form";
     }
 
-    // DELETE PERSON
-    @GetMapping("/delete/{id}")
+    // DELETE
+    @PostMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
         personService.deleteById(id);
         return "redirect:/persons";
