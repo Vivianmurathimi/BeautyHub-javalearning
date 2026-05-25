@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -98,6 +99,13 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(ex -> ex
                         .accessDeniedPage("/access-denied")
+                        // Return 401 for unauthenticated API requests
+                        .defaultAuthenticationEntryPointFor(
+                                (request, response, authException) ->
+                                        response.sendError(401,
+                                                "Unauthorized"),
+                                new AntPathRequestMatcher("/api/**")
+                        )
                 )
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers(
