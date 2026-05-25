@@ -17,17 +17,14 @@ public class GlobalExceptionHandler {
 
     // Handles "not found" errors
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> handleRuntimeException(
+    public ResponseEntity<ErrorResponse>
+    handleRuntimeException(
             RuntimeException ex) {
-
-        log.error("RuntimeException caught: {}",
+        log.error("RuntimeException: {}",
                 ex.getMessage());
-
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
-                ex.getMessage()
-        );
-
+                ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(error);
@@ -35,24 +32,20 @@ public class GlobalExceptionHandler {
 
     // Ignores favicon and static resource errors
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<Void> handleNoResourceFound(
+    public ResponseEntity<Void> handleNoResource(
             NoResourceFoundException ex) {
         return ResponseEntity.notFound().build();
     }
 
     // Handles ALL other unexpected errors
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(
-            Exception ex) {
-
-        log.error("Unexpected exception caught: {}",
+    public ResponseEntity<ErrorResponse>
+    handleException(Exception ex) {
+        log.error("Unexpected exception: {}",
                 ex.getMessage(), ex);
-
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "An unexpected error occurred"
-        );
-
+                "An unexpected error occurred");
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(error);
