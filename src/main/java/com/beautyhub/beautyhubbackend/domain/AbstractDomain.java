@@ -8,8 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @MappedSuperclass
-
-public  abstract class AbstractDomain{
+public abstract class AbstractDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,5 +33,3 @@ public  abstract class AbstractDomain{
         updated = LocalDateTime.now();
     }
 }
-
-
