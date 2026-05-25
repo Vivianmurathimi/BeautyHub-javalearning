@@ -1,7 +1,9 @@
 package com.beautyhub.beautyhubbackend.service;
 
 import com.beautyhub.beautyhubbackend.domain.Company;
+import com.beautyhub.beautyhubbackend.domain.Country;
 import com.beautyhub.beautyhubbackend.repository.CompanyRepository;
+import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -12,12 +14,13 @@ import java.util.Optional;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
-    private final ClientService clientService;
+    private final CountryRepository countryRepository;
 
-    public CompanyService(CompanyRepository companyRepository,
-                          ClientService clientService) {
+    public CompanyService(
+            CompanyRepository companyRepository,
+            CountryRepository countryRepository) {
         this.companyRepository = companyRepository;
-        this.clientService = clientService;
+        this.countryRepository = countryRepository;
     }
 
     // CREATE
@@ -35,19 +38,28 @@ public class CompanyService {
         return companyRepository.findById(id);
     }
 
-    // UPDATE — Company only owns taxId
-    public Company update(Long id, Company updatedCompany) {
-        Company existing = companyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Company not found with id: " + id));
-
-        // Update Client fields
+    // UPDATE
+    public Company update(Long id,
+                          Company updatedCompany) {
+        Company existing = companyRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Company not found: " + id));
         existing.setName(updatedCompany.getName());
-        existing.setAddress(updatedCompany.getAddress());
-        existing.setAmount(updatedCompany.getAmount());
-        existing.setCountry(updatedCompany.getCountry());
-
         existing.setTaxId(updatedCompany.getTaxId());
+        existing.setAddress(updatedCompany.getAddress());
+
+        // Update country if provided
+        if (updatedCompany.getCountry() != null) {
+            Country country = countryRepository
+                    .findById(updatedCompany
+                            .getCountry().getId())
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Country not found"));
+            existing.setCountry(country);
+        }
         return companyRepository.save(existing);
     }
 
@@ -55,7 +67,7 @@ public class CompanyService {
     public void deleteById(Long id) {
         if (!companyRepository.existsById(id)) {
             throw new RuntimeException(
-                    "Company not found with id: " + id);
+                    "Company not found: " + id);
         }
         companyRepository.deleteById(id);
     }

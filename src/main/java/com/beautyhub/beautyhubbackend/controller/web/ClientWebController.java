@@ -1,7 +1,7 @@
 package com.beautyhub.beautyhubbackend.controller.web;
 
 import com.beautyhub.beautyhubbackend.domain.Client;
-import com.beautyhub.beautyhubbackend.service.ClientService;
+import com.beautyhub.beautyhubbackend.service.ShopOwnerService;
 import com.beautyhub.beautyhubbackend.service.CountryService;
 import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import org.springframework.stereotype.Controller;
@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/clients")
 public class ClientWebController {
 
-    private final ClientService clientService;
+    private final ShopOwnerService shopOwnerService;
     private final CountryService countryService;
     private final CountryRepository countryRepository;
 
-    public ClientWebController(ClientService clientService,
+    public ClientWebController(ShopOwnerService shopOwnerService,
                                CountryService countryService,
-                                CountryRepository countryRepository) {
-        this.clientService = clientService;
+                               CountryRepository countryRepository) {
+        this.shopOwnerService = shopOwnerService;
         this.countryService = countryService;
         this.countryRepository = countryRepository;
     }
@@ -28,7 +28,7 @@ public class ClientWebController {
     @GetMapping
     public String findAll(Model model) {
         model.addAttribute("clients",
-                clientService.findAll());
+                shopOwnerService.findAll());
         return "client/list";
     }
 
@@ -51,9 +51,9 @@ public class ClientWebController {
                     .ifPresent(client::setCountry);
         }
         if (client.getId() != null) {
-            clientService.update(client.getId(), client);
+            shopOwnerService.update(client.getId(), client);
         } else {
-            clientService.save(client);
+            shopOwnerService.save(client);
         }
         return "redirect:/clients";
     }
@@ -61,7 +61,7 @@ public class ClientWebController {
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id,
                                Model model) {
-        clientService.findById(id)
+        shopOwnerService.findById(id)
                 .ifPresent(c -> model.addAttribute("client", c));
         model.addAttribute("countries",
                 countryService.findAll());
@@ -71,7 +71,7 @@ public class ClientWebController {
     // DELETE CLIENT
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {
-        clientService.deleteById(id);
+        shopOwnerService.deleteById(id);
         return "redirect:/clients";
     }
 }
