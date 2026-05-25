@@ -7,10 +7,10 @@
 <div layout:fragment="content">
     <div class="d-flex justify-content-between
                 align-items-center mb-4">
-        <h2>👤 Persons</h2>
-        <a th:href="@{/persons/new}"
+        <h2>🛍️ Products</h2>
+        <a th:href="@{/products/new}"
            class="btn btn-primary-custom">
-            + Add New Person
+            + Add New Product
         </a>
     </div>
     <div class="card">
@@ -20,32 +20,32 @@
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
-                    <th>Personal ID</th>
-                    <th>Country</th>
-                    <th>Address</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Supplier</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="person : ${persons}">
-                    <td th:text="${person.id}"></td>
-                    <td th:text="${person.name}"></td>
-                    <td th:text="${person.personalId}">
+                <tr th:each="product : ${products}">
+                    <td th:text="${product.id}"></td>
+                    <td th:text="${product.name}"></td>
+                    <td th:text="${product.description}">
                     </td>
-                    <td th:text="${person.country != null}
-                            ? ${person.country.name}
+                    <td th:text="${product.price}"></td>
+                    <td th:text="${product.company != null}
+                            ? ${product.company.name}
                             : 'N/A'"></td>
-                    <td th:text="${person.address}"></td>
                     <td>
-                        <a th:href="@{/persons/edit/{id}
-                               (id=${person.id})}"
+                        <a th:href="@{/products/edit/{id}
+                               (id=${product.id})}"
                            class="btn btn-sm
                                btn-primary-custom">
                             Edit
                         </a>
                         <form sec:authorize="hasRole('ADMIN')"
-                              th:action="@{/persons/delete/{id}
-                              (id=${person.id})}"
+                              th:action="@{/products/delete/{id}
+                              (id=${product.id})}"
                               method="post"
                               class="d-inline">
                             <input type="hidden"

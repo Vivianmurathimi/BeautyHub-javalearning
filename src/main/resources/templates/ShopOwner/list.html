@@ -7,10 +7,10 @@
 <div layout:fragment="content">
     <div class="d-flex justify-content-between
                 align-items-center mb-4">
-        <h2>👤 Persons</h2>
-        <a th:href="@{/persons/new}"
+        <h2>🏪 Shop Owners</h2>
+        <a th:href="@{/shopowners/new}"
            class="btn btn-primary-custom">
-            + Add New Person
+            + Add New Shop Owner
         </a>
     </div>
     <div class="card">
@@ -19,33 +19,35 @@
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Personal ID</th>
+                    <th>Shop Name</th>
+                    <th>Owner Name</th>
                     <th>Country</th>
                     <th>Address</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="person : ${persons}">
-                    <td th:text="${person.id}"></td>
-                    <td th:text="${person.name}"></td>
-                    <td th:text="${person.personalId}">
+                <tr th:each="shopOwner : ${shopOwners}">
+                    <td th:text="${shopOwner.id}"></td>
+                    <td th:text="${shopOwner.shopName}">
                     </td>
-                    <td th:text="${person.country != null}
-                            ? ${person.country.name}
+                    <td th:text="${shopOwner.ownerName}">
+                    </td>
+                    <td th:text="${shopOwner.country != null}
+                            ? ${shopOwner.country.name}
                             : 'N/A'"></td>
-                    <td th:text="${person.address}"></td>
+                    <td th:text="${shopOwner.address}">
+                    </td>
                     <td>
-                        <a th:href="@{/persons/edit/{id}
-                               (id=${person.id})}"
+                        <a th:href="@{/shopowners/edit/{id}
+                               (id=${shopOwner.id})}"
                            class="btn btn-sm
                                btn-primary-custom">
                             Edit
                         </a>
                         <form sec:authorize="hasRole('ADMIN')"
-                              th:action="@{/persons/delete/{id}
-                              (id=${person.id})}"
+                              th:action="@{/shopowners/delete/{id}
+                              (id=${shopOwner.id})}"
                               method="post"
                               class="d-inline">
                             <input type="hidden"

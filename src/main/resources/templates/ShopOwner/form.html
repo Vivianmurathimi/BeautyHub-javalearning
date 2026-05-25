@@ -5,40 +5,40 @@
 <body>
 <div layout:fragment="content">
     <h2 class="mb-4"
-        th:text="${company != null and
-        company.id != null}
-        ? 'Edit Company'
-        : 'Add New Company'">
+        th:text="${shopOwner != null and
+        shopOwner.id != null}
+        ? 'Edit Shop Owner'
+        : 'Add New Shop Owner'">
     </h2>
     <div class="card">
         <div class="card-body">
-            <form th:action="@{/companies/save}"
-                  th:object="${company}"
+            <form th:action="@{/shopowners/save}"
+                  th:object="${shopOwner}"
                   method="post">
 
                 <input type="hidden"
-                       th:if="${company != null and
-                       company.id != null}"
+                       th:if="${shopOwner != null and
+                       shopOwner.id != null}"
                        th:field="*{id}"/>
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Company Name
+                        Shop Name
                     </label>
                     <input type="text"
-                           th:field="*{name}"
+                           th:field="*{shopName}"
                            class="form-control"
-                           placeholder="e.g. ORS Cosmetics"/>
+                           placeholder="e.g. Vivi's Beauty Shop"/>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Tax ID
+                        Owner Name
                     </label>
                     <input type="text"
-                           th:field="*{taxId}"
+                           th:field="*{ownerName}"
                            class="form-control"
-                           placeholder="e.g. TAX123456"/>
+                           placeholder="e.g. Vivian Murathimi"/>
                 </div>
 
                 <div class="mb-3">
@@ -48,13 +48,13 @@
                     <input type="text"
                            th:field="*{address}"
                            class="form-control"
-                           placeholder="e.g. 123 Business Ave"/>
+                           placeholder="e.g. 123 Beauty St"/>
                 </div>
 
                 <!-- Country Dropdown -->
                 <div class="mb-3">
                     <label class="form-label">
-                        Country (HQ)
+                        Country
                     </label>
                     <select name="countryId"
                             class="form-control">
@@ -65,9 +65,9 @@
                                 th:each="country : ${countries}"
                                 th:value="${country.id}"
                                 th:text="${country.name}"
-                                th:selected="${company != null
-                            and company.country != null
-                            and company.country.id
+                                th:selected="${shopOwner != null
+                            and shopOwner.country != null
+                            and shopOwner.country.id
                             == country.id}">
                         </option>
                     </select>
@@ -76,9 +76,9 @@
                 <div class="d-flex gap-2">
                     <button type="submit"
                             class="btn btn-primary-custom">
-                        Save Company
+                        Save Shop Owner
                     </button>
-                    <a th:href="@{/companies}"
+                    <a th:href="@{/shopowners}"
                        class="btn btn-secondary">
                         Cancel
                     </a>
