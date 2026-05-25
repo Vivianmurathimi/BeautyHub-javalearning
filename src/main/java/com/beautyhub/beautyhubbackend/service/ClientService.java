@@ -4,6 +4,7 @@ import com.beautyhub.beautyhubbackend.domain.Client;
 import com.beautyhub.beautyhubbackend.domain.Country;
 import com.beautyhub.beautyhubbackend.repository.ClientRepository;
 import com.beautyhub.beautyhubbackend.service.CountryService;
+import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -15,11 +16,14 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
     private final CountryService countryService;
+    private final CountryRepository countryRepository;
 
     public ClientService(ClientRepository clientRepository,
-                         CountryService countryService) {
+                         CountryService countryService,
+                         CountryRepository countryRepository) {
         this.clientRepository = clientRepository;
         this.countryService = countryService;
+        this.countryRepository = countryRepository;
     }
 
     // CREATE

@@ -1,4 +1,4 @@
-package com.beautyhub.beautyhubbackend.controller;
+package com.beautyhub.beautyhubbackend.controller.web;
 
 import com.beautyhub.beautyhubbackend.domain.Country;
 import com.beautyhub.beautyhubbackend.service.CountryService;
@@ -32,12 +32,16 @@ public class CountryWebController {
     }
 
     // SAVE COUNTRY
+    // SAVE COUNTRY
     @PostMapping("/save")
     public String save(@ModelAttribute Country country) {
-        countryService.save(country);
+        if (country.getId() != null) {
+            countryService.update(country.getId(), country);
+        } else {
+            countryService.save(country);
+        }
         return "redirect:/countries";
     }
-
     // SHOW EDIT FORM
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id,
@@ -46,7 +50,6 @@ public class CountryWebController {
                 .ifPresent(c -> model.addAttribute("country", c));
         return "country/form";
     }
-
     // DELETE COUNTRY
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable Long id) {

@@ -40,6 +40,13 @@ public class CompanyService {
         Company existing = companyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(
                         "Company not found with id: " + id));
+
+        // Update Client fields
+        existing.setName(updatedCompany.getName());
+        existing.setAddress(updatedCompany.getAddress());
+        existing.setAmount(updatedCompany.getAmount());
+        existing.setCountry(updatedCompany.getCountry());
+
         existing.setTaxId(updatedCompany.getTaxId());
         return companyRepository.save(existing);
     }
