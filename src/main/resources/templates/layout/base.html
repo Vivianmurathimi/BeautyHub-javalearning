@@ -124,6 +124,19 @@
                th:href="@{/companies}">
                 🏢 Companies
             </a>
+            <!-- LOGOUT BUTTON -->
+            <form th:action="@{/logout}"
+                  method="post"
+                  class="d-inline">
+                <input type="hidden"
+                       th:name="${_csrf.parameterName}"
+                       th:value="${_csrf.token}"/>
+                <button type="submit"
+                        class="btn btn-sm btn-outline-light ms-3">
+                    Logout
+                </button>
+            </form>
+
         </div>
     </div>
 </nav>

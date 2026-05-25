@@ -1,4 +1,4 @@
-package com.beautyhub.beautyhubbackend.controller;
+package com.beautyhub.beautyhubbackend.controller.api;
 
 import com.beautyhub.beautyhubbackend.domain.ErrorResponse;
 import org.springframework.http.HttpStatus;
