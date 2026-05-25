@@ -2,36 +2,35 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/base}">
-
 <body>
 <div layout:fragment="content">
-
     <h2 class="mb-4"
-        th:text="${person != null and person.id != null}
-        ? 'Edit Person' : 'Add New Person'">
+        th:text="${person != null and
+        person.id != null}
+        ? 'Edit Person'
+        : 'Add New Person'">
     </h2>
-
     <div class="card">
         <div class="card-body">
             <form th:action="@{/persons/save}"
                   th:object="${person}"
                   method="post">
 
-                <!-- Hidden ID for editing -->
                 <input type="hidden"
-                       th:if="${person != null and person.id != null}"
+                       th:if="${person != null and
+                       person.id != null}"
                        th:field="*{id}"/>
 
-                <!-- Name -->
                 <div class="mb-3">
-                    <label class="form-label">Name</label>
+                    <label class="form-label">
+                        Name
+                    </label>
                     <input type="text"
                            th:field="*{name}"
                            class="form-control"
                            placeholder="e.g. John Doe"/>
                 </div>
 
-                <!-- Personal ID -->
                 <div class="mb-3">
                     <label class="form-label">
                         Personal ID
@@ -42,9 +41,21 @@
                            placeholder="e.g. 123456789"/>
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label">
+                        Address
+                    </label>
+                    <input type="text"
+                           th:field="*{address}"
+                           class="form-control"
+                           placeholder="e.g. 123 Main St"/>
+                </div>
+
                 <!-- Country Dropdown -->
                 <div class="mb-3">
-                    <label class="form-label">Country</label>
+                    <label class="form-label">
+                        Country
+                    </label>
                     <select name="countryId"
                             class="form-control">
                         <option value="">
@@ -54,32 +65,14 @@
                                 th:each="country : ${countries}"
                                 th:value="${country.id}"
                                 th:text="${country.name}"
-                                th:selected="${person != null and
-                                person.country != null and
-                                person.country.id == country.id}">
+                                th:selected="${person != null
+                            and person.country != null
+                            and person.country.id
+                            == country.id}">
                         </option>
                     </select>
                 </div>
 
-                <!-- Address -->
-                <div class="mb-3">
-                    <label class="form-label">Address</label>
-                    <input type="text"
-                           th:field="*{address}"
-                           class="form-control"
-                           placeholder="e.g. 123 Main St"/>
-                </div>
-
-                <!-- Amount -->
-                <div class="mb-3">
-                    <label class="form-label">Amount</label>
-                    <input type="number"
-                           th:field="*{amount}"
-                           class="form-control"
-                           placeholder="e.g. 1000"/>
-                </div>
-
-                <!-- Buttons -->
                 <div class="d-flex gap-2">
                     <button type="submit"
                             class="btn btn-primary-custom">
@@ -90,11 +83,9 @@
                         Cancel
                     </a>
                 </div>
-
             </form>
         </div>
     </div>
-
 </div>
 </body>
 </html>

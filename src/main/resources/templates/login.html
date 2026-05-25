@@ -100,11 +100,10 @@
     </style>
 </head>
 <body>
-
 <div class="login-card">
 
     <!-- BRAND -->
-    <div class="brand-title">✂ BEAUTY HUB</div>
+    <div class="brand-title">💄 BEAUTY HUB</div>
     <div class="brand-subtitle">
         Where Style Meets Technology
     </div>
@@ -112,25 +111,23 @@
     <!-- ERROR MESSAGE -->
     <div class="error-message"
          th:if="${param.error}">
-        Invalid username or password. Please try again.
+        ❌ Invalid username or password.
+        Please try again.
     </div>
 
     <!-- LOGOUT MESSAGE -->
     <div class="success-message"
          th:if="${param.logout}">
-        You have been logged out successfully.
+        ✅ You have been logged out successfully.
     </div>
 
     <!-- LOGIN FORM -->
-    <form th:action="@{/login}"
-          method="post">
+    <form th:action="@{/login}" method="post">
 
-        <!-- CSRF TOKEN — required by Spring Security -->
         <input type="hidden"
                th:name="${_csrf.parameterName}"
                th:value="${_csrf.token}"/>
 
-        <!-- Username -->
         <div class="mb-3">
             <label class="form-label">
                 Username
@@ -142,7 +139,6 @@
                    autofocus/>
         </div>
 
-        <!-- Password -->
         <div class="mb-3">
             <label class="form-label">
                 Password
@@ -153,17 +149,20 @@
                    placeholder="Enter password"/>
         </div>
 
-        <!-- Login Button -->
-        <button type="submit"
-                class="btn-login">
+        <button type="submit" class="btn-login">
             Login
         </button>
 
     </form>
 
+    <!-- CREDENTIALS HINT -->
+    <div class="credentials-hint">
+        <strong>Test Credentials:</strong><br/>
+        👑 Admin: admin / admin123<br/>
+        👤 User: user / user123
+    </div>
 
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
 </script>
 </body>
