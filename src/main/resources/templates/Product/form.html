@@ -5,70 +5,74 @@
 <body>
 <div layout:fragment="content">
     <h2 class="mb-4"
-        th:text="${company != null and
-        company.id != null}
-        ? 'Edit Company'
-        : 'Add New Company'">
+        th:text="${product != null and
+        product.id != null}
+        ? 'Edit Product'
+        : 'Add New Product'">
     </h2>
     <div class="card">
         <div class="card-body">
-            <form th:action="@{/companies/save}"
-                  th:object="${company}"
+            <form th:action="@{/products/save}"
+                  th:object="${product}"
                   method="post">
 
                 <input type="hidden"
-                       th:if="${company != null and
-                       company.id != null}"
+                       th:if="${product != null and
+                       product.id != null}"
                        th:field="*{id}"/>
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Company Name
+                        Product Name
                     </label>
                     <input type="text"
                            th:field="*{name}"
                            class="form-control"
-                           placeholder="e.g. ORS Cosmetics"/>
+                           placeholder="e.g. Hair Relaxer"/>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">
-                        Tax ID
+                        Description
                     </label>
-                    <input type="text"
-                           th:field="*{taxId}"
+                    <textarea
+                            th:field="*{description}"
+                            class="form-control"
+                            rows="3"
+                            placeholder="e.g. Professional
+                           hair relaxer kit">
+                    </textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">
+                        Price
+                    </label>
+                    <input type="number"
+                           step="0.01"
+                           th:field="*{price}"
                            class="form-control"
-                           placeholder="e.g. TAX123456"/>
+                           placeholder="e.g. 29.99"/>
                 </div>
 
+                <!-- Company Dropdown -->
                 <div class="mb-3">
                     <label class="form-label">
-                        Address
+                        Supplier (Company)
                     </label>
-                    <input type="text"
-                           th:field="*{address}"
-                           class="form-control"
-                           placeholder="e.g. 123 Business Ave"/>
-                </div>
-
-                <!-- Country Dropdown -->
-                <div class="mb-3">
-                    <label class="form-label">
-                        Country (HQ)
-                    </label>
-                    <select name="countryId"
+                    <select name="companyId"
                             class="form-control">
                         <option value="">
-                            Select Country
+                            Select Company
                         </option>
                         <option
-                                th:each="country : ${countries}"
-                                th:value="${country.id}"
-                                th:text="${country.name}"
-                                th:selected="${company != null
-                            and company.country != null
-                            and company.country.id
-                            == country.id}">
+                                th:each="company : ${companies}"
+                                th:value="${company.id}"
+                                th:text="${company.name}"
+                                th:selected="${product != null
+                            and product.company != null
+                            and product.company.id
+                            == company.id}">
                         </option>
                     </select>
                 </div>
@@ -76,9 +80,9 @@
                 <div class="d-flex gap-2">
                     <button type="submit"
                             class="btn btn-primary-custom">
-                        Save Company
+                        Save Product
                     </button>
-                    <a th:href="@{/companies}"
+                    <a th:href="@{/products}"
                        class="btn btn-secondary">
                         Cancel
                     </a>
