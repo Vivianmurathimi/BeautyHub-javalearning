@@ -1,9 +1,7 @@
 package com.beautyhub.beautyhubbackend.service;
 
 import com.beautyhub.beautyhubbackend.domain.Client;
-import com.beautyhub.beautyhubbackend.domain.Country;
-import com.beautyhub.beautyhubbackend.repository.ClientRepository;
-import com.beautyhub.beautyhubbackend.service.CountryService;
+import com.beautyhub.beautyhubbackend.repository.ShopOwnerRepository;
 import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,51 +12,51 @@ import java.util.Optional;
 @Transactional
 public class ClientService {
 
-    private final ClientRepository clientRepository;
+    private final ShopOwnerRepository shopOwnerRepository;
     private final CountryService countryService;
     private final CountryRepository countryRepository;
 
-    public ClientService(ClientRepository clientRepository,
+    public ClientService(ShopOwnerRepository shopOwnerRepository,
                          CountryService countryService,
                          CountryRepository countryRepository) {
-        this.clientRepository = clientRepository;
+        this.shopOwnerRepository = shopOwnerRepository;
         this.countryService = countryService;
         this.countryRepository = countryRepository;
     }
 
     // CREATE
     public Client save(Client client) {
-        return clientRepository.save(client);
+        return shopOwnerRepository.save(client);
     }
 
     // READ ALL
     public List<Client> findAll() {
-        return clientRepository.findAll();
+        return shopOwnerRepository.findAll();
     }
 
     // READ ONE
     public Optional<Client> findById(Long id) {
-        return clientRepository.findById(id);
+        return shopOwnerRepository.findById(id);
     }
 
     // UPDATE
     public Client update(Long id, Client updatedClient) {
-        Client existing = clientRepository.findById(id)
+        Client existing = shopOwnerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(
                         "Client not found with id: " + id));
         existing.setName(updatedClient.getName());
         existing.setAddress(updatedClient.getAddress());
         existing.setAmount(updatedClient.getAmount());
         existing.setCountry(updatedClient.getCountry());
-        return clientRepository.save(existing);
+        return shopOwnerRepository.save(existing);
     }
 
     // DELETE
     public void deleteById(Long id) {
-        if (!clientRepository.existsById(id)) {
+        if (!shopOwnerRepository.existsById(id)) {
             throw new RuntimeException(
                     "Client not found with id: " + id);
         }
-        clientRepository.deleteById(id);
+        shopOwnerRepository.deleteById(id);
     }
 }
