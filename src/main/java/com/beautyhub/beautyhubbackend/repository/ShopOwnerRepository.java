@@ -1,10 +1,10 @@
 package com.beautyhub.beautyhubbackend.repository;
 
-import com.beautyhub.beautyhubbackend.domain.Company;
+import com.beautyhub.beautyhubbackend.domain.ShopOwner;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CompanyRepository
-        extends JpaRepository<Company, Long> {
+public interface ShopOwnerRepository
+        extends JpaRepository<ShopOwner, Long> {
 }
