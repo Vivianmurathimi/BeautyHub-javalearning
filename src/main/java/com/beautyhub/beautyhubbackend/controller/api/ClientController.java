@@ -1,7 +1,7 @@
 package com.beautyhub.beautyhubbackend.controller.api;
 
 import com.beautyhub.beautyhubbackend.domain.Client;
-import com.beautyhub.beautyhubbackend.service.ClientService;
+import com.beautyhub.beautyhubbackend.service.ShopOwnerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -10,23 +10,23 @@ import java.util.List;
 @RequestMapping("/api/clients")
 public class ClientController {
 
-    private final ClientService clientService;
+    private final ShopOwnerService shopOwnerService;
 
-    public ClientController(ClientService clientService) {
-        this.clientService = clientService;
+    public ClientController(ShopOwnerService shopOwnerService) {
+        this.shopOwnerService = shopOwnerService;
     }
 
     // GET ALL — /api/clients
     @GetMapping
     public ResponseEntity<List<Client>> findAll() {
-        return ResponseEntity.ok(clientService.findAll());
+        return ResponseEntity.ok(shopOwnerService.findAll());
     }
 
     // GET ONE — /api/clients/1
     @GetMapping("/{id}")
     public ResponseEntity<Client> findById(
             @PathVariable Long id) {
-        return clientService.findById(id)
+        return shopOwnerService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -36,7 +36,7 @@ public class ClientController {
     public ResponseEntity<Client> save(
             @RequestBody Client client) {
         return ResponseEntity.status(201)
-                .body(clientService.save(client));
+                .body(shopOwnerService.save(client));
     }
 
     // PUT — /api/clients/1
@@ -45,14 +45,14 @@ public class ClientController {
             @PathVariable Long id,
             @RequestBody Client client) {
         return ResponseEntity.ok(
-                clientService.update(id, client));
+                shopOwnerService.update(id, client));
     }
 
     // DELETE — /api/clients/1
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(
             @PathVariable Long id) {
-        clientService.deleteById(id);
+        shopOwnerService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }

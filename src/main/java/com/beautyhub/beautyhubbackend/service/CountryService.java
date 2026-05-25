@@ -13,7 +13,8 @@ public class CountryService {
 
     private final CountryRepository countryRepository;
 
-    public CountryService(CountryRepository countryRepository) {
+    public CountryService(
+            CountryRepository countryRepository) {
         this.countryRepository = countryRepository;
     }
 
@@ -33,9 +34,13 @@ public class CountryService {
     }
 
     // UPDATE
-    public Country update(Long id, Country updatedCountry) {
-        Country existing = countryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Country not found with id: " + id));
+    public Country update(Long id,
+                          Country updatedCountry) {
+        Country existing = countryRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Country not found: " + id));
         existing.setName(updatedCountry.getName());
         existing.setSign(updatedCountry.getSign());
         return countryRepository.save(existing);
@@ -44,7 +49,8 @@ public class CountryService {
     // DELETE
     public void deleteById(Long id) {
         if (!countryRepository.existsById(id)) {
-            throw new RuntimeException("Country not found with id: " + id);
+            throw new RuntimeException(
+                    "Country not found: " + id);
         }
         countryRepository.deleteById(id);
     }
