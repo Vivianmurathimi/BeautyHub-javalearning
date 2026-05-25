@@ -23,7 +23,6 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-
         UserDetails admin = User.builder()
                 .username("admin")
                 .password(passwordEncoder()
@@ -38,32 +37,55 @@ public class SecurityConfig {
                 .roles("USER")
                 .build();
 
-        return new InMemoryUserDetailsManager(admin, user);
+        return new InMemoryUserDetailsManager(
+                admin, user);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http) throws Exception {
-
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/access-denied").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/countries/delete/**")
+
+                        // Public routes
+                        .requestMatchers("/login")
+                        .permitAll()
+                        .requestMatchers("/access-denied")
+                        .permitAll()
+                        .requestMatchers("/h2-console/**")
+                        .permitAll()
+
+                        // ADMIN only — delete for all entities
+                        .requestMatchers(
+                                "/countries/delete/**")
                         .hasRole("ADMIN")
-                        .requestMatchers("/clients/delete/**")
+                        .requestMatchers(
+                                "/companies/delete/**")
                         .hasRole("ADMIN")
-                        .requestMatchers("/persons/delete/**")
+                        .requestMatchers(
+                                "/shopowners/delete/**")
                         .hasRole("ADMIN")
-                        .requestMatchers("/companies/delete/**")
+                        .requestMatchers(
+                                "/persons/delete/**")
                         .hasRole("ADMIN")
+                        .requestMatchers(
+                                "/products/delete/**")
+                        .hasRole("ADMIN")
+
+                        // ADMIN only — delete via REST API
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.DELETE,
+                                "/api/**")
+                        .hasRole("ADMIN")
+
+                        // Everything else just needs login
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/countries", true)
+                        .defaultSuccessUrl("/countries",
+                                true)
                         .failureUrl("/login?error")
                         .permitAll()
                 )
@@ -78,10 +100,14 @@ public class SecurityConfig {
                         .accessDeniedPage("/access-denied")
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**")
+                        .ignoringRequestMatchers(
+                                "/h2-console/**")
+                        .ignoringRequestMatchers(
+                                "/api/**")
                 )
                 .headers(headers -> headers
-                        .frameOptions(frame -> frame.disable())
+                        .frameOptions(frame ->
+                                frame.disable())
                 );
 
         return http.build();
