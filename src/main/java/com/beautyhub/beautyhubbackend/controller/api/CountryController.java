@@ -12,26 +12,29 @@ public class CountryController {
 
     private final CountryService countryService;
 
-    public CountryController(CountryService countryService) {
+    public CountryController(
+            CountryService countryService) {
         this.countryService = countryService;
     }
 
-    // GET ALL — /api/countries
+    // GET ALL → /api/countries
     @GetMapping
     public ResponseEntity<List<Country>> findAll() {
-        return ResponseEntity.ok(countryService.findAll());
+        return ResponseEntity.ok(
+                countryService.findAll());
     }
 
-    // GET ONE — /api/countries/1
+    // GET ONE → /api/countries/1
     @GetMapping("/{id}")
     public ResponseEntity<Country> findById(
             @PathVariable Long id) {
         return countryService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity
+                        .notFound().build());
     }
 
-    // POST — /api/countries
+    // POST → /api/countries
     @PostMapping
     public ResponseEntity<Country> save(
             @RequestBody Country country) {
@@ -39,7 +42,7 @@ public class CountryController {
                 .body(countryService.save(country));
     }
 
-    // PUT — /api/countries/1
+    // PUT → /api/countries/1
     @PutMapping("/{id}")
     public ResponseEntity<Country> update(
             @PathVariable Long id,
@@ -48,7 +51,7 @@ public class CountryController {
                 countryService.update(id, country));
     }
 
-    // DELETE — /api/countries/1
+    // DELETE → /api/countries/1
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(
             @PathVariable Long id) {
