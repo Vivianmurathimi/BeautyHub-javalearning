@@ -1,9 +1,9 @@
 package com.beautyhub.beautyhubbackend.service;
 
+import com.beautyhub.beautyhubbackend.domain.Country;
 import com.beautyhub.beautyhubbackend.domain.Person;
-import com.beautyhub.beautyhubbackend.domain.Client;
+import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import com.beautyhub.beautyhubbackend.repository.PersonRepository;
-import com.beautyhub.beautyhubbackend.service.ClientService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -14,12 +14,13 @@ import java.util.Optional;
 public class PersonService {
 
     private final PersonRepository personRepository;
-    private final ClientService clientService;
+    private final CountryRepository countryRepository;
 
-    public PersonService(PersonRepository personRepository,
-                         ClientService clientService) {
+    public PersonService(
+            PersonRepository personRepository,
+            CountryRepository countryRepository) {
         this.personRepository = personRepository;
-        this.clientService = clientService;
+        this.countryRepository = countryRepository;
     }
 
     // CREATE
@@ -38,17 +39,28 @@ public class PersonService {
     }
 
     // UPDATE
-    public Person update(Long id, Person updatedPerson) {
-        Person existing = personRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Person not found with id: " + id));
-        // Update Client fields
+    public Person update(Long id,
+                         Person updatedPerson) {
+        Person existing = personRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Person not found: " + id));
         existing.setName(updatedPerson.getName());
+        existing.setPersonalId(
+                updatedPerson.getPersonalId());
         existing.setAddress(updatedPerson.getAddress());
-        existing.setAmount(updatedPerson.getAmount());
-        existing.setCountry(updatedPerson.getCountry());
 
-        existing.setPersonalId(updatedPerson.getPersonalId());
+        // Update country if provided
+        if (updatedPerson.getCountry() != null) {
+            Country country = countryRepository
+                    .findById(updatedPerson
+                            .getCountry().getId())
+                    .orElseThrow(() ->
+                            new RuntimeException(
+                                    "Country not found"));
+            existing.setCountry(country);
+        }
         return personRepository.save(existing);
     }
 
@@ -56,7 +68,7 @@ public class PersonService {
     public void deleteById(Long id) {
         if (!personRepository.existsById(id)) {
             throw new RuntimeException(
-                    "Person not found with id: " + id);
+                    "Person not found: " + id);
         }
         personRepository.deleteById(id);
     }
