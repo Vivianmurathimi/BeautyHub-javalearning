@@ -16,6 +16,8 @@
                   th:object="${country}"
                   method="post">
 
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
                 <input type="hidden"
                        th:if="${country != null and
                        country.id != null}"
