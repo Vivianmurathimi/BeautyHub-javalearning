@@ -2,6 +2,7 @@ package com.beautyhub.beautyhubbackend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -56,7 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**")
                         .permitAll()
 
-                        // ADMIN only — delete for all entities
+                        // ADMIN only — web delete
                         .requestMatchers(
                                 "/countries/delete/**")
                         .hasRole("ADMIN")
@@ -73,13 +74,13 @@ public class SecurityConfig {
                                 "/products/delete/**")
                         .hasRole("ADMIN")
 
-                        // ADMIN only — delete via REST API
+                        // ADMIN only — REST API delete
                         .requestMatchers(
-                                org.springframework.http.HttpMethod.DELETE,
+                                HttpMethod.DELETE,
                                 "/api/**")
                         .hasRole("ADMIN")
 
-                        // Everything else just needs login
+                        // Everything else needs login
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -98,14 +99,19 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .exceptionHandling(ex -> ex
-                        .accessDeniedPage("/access-denied")
-                        // Return 401 for unauthenticated API requests
-                        .defaultAuthenticationEntryPointFor(
-                                (request, response, authException) ->
-                                        response.sendError(401,
-                                                "Unauthorized"),
-                                new AntPathRequestMatcher("/api/**")
-                        )
+                                .accessDeniedPage("/access-denied")
+
+                                // 401 for unauthenticated REST API requests
+                                .defaultAuthenticationEntryPointFor(
+                                        (request, response, authException) ->
+                                                response.sendError(
+                                                        401, "Unauthorized"),
+                                        new AntPathRequestMatcher("/api/**")
+                                )
+
+                        // 302 redirect for unauthenticated Web requests
+                        // (Spring default handles this automatically
+                        // via formLogin redirect to /login)
                 )
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers(
