@@ -1,4 +1,4 @@
-package com.beautyhub.beautyhubbackend.controller;
+package com.beautyhub.beautyhubbackend.controller.api;
 
 import com.beautyhub.beautyhubbackend.domain.Country;
 import com.beautyhub.beautyhubbackend.service.CountryService;
@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -45,8 +46,7 @@ class CountryControllerTest {
 
     // Test 1 — GET /api/countries returns list
     @Test
-    @WithMockUser(username = "user",
-            roles = "USER")
+    @WithMockUser(username = "user", roles = "USER")
     void getAll_ShouldReturn200() throws Exception {
         when(countryService.findAll())
                 .thenReturn(Arrays.asList(country));
@@ -59,8 +59,7 @@ class CountryControllerTest {
 
     // Test 2 — GET /api/countries/1 returns country
     @Test
-    @WithMockUser(username = "user",
-            roles = "USER")
+    @WithMockUser(username = "user", roles = "USER")
     void getById_ShouldReturn200() throws Exception {
         when(countryService.findById(1L))
                 .thenReturn(Optional.of(country));
@@ -73,8 +72,7 @@ class CountryControllerTest {
 
     // Test 3 — GET /api/countries/99 returns 404
     @Test
-    @WithMockUser(username = "user",
-            roles = "USER")
+    @WithMockUser(username = "user", roles = "USER")
     void getById_ShouldReturn404_WhenNotFound()
             throws Exception {
         when(countryService.findById(99L))
@@ -86,8 +84,7 @@ class CountryControllerTest {
 
     // Test 4 — POST /api/countries creates country
     @Test
-    @WithMockUser(username = "user",
-            roles = "USER")
+    @WithMockUser(username = "user", roles = "USER")
     void save_ShouldReturn201() throws Exception {
         when(countryService.save(any()))
                 .thenReturn(country);
@@ -104,8 +101,7 @@ class CountryControllerTest {
 
     // Test 5 — DELETE as USER returns 403
     @Test
-    @WithMockUser(username = "user",
-            roles = "USER")
+    @WithMockUser(username = "user", roles = "USER")
     void delete_AsUser_ShouldReturn403()
             throws Exception {
         mockMvc.perform(
@@ -115,8 +111,7 @@ class CountryControllerTest {
 
     // Test 6 — DELETE as ADMIN returns 204
     @Test
-    @WithMockUser(username = "admin",
-            roles = "ADMIN")
+    @WithMockUser(username = "admin", roles = "ADMIN")
     void delete_AsAdmin_ShouldReturn204()
             throws Exception {
         doNothing().when(countryService)
@@ -129,7 +124,7 @@ class CountryControllerTest {
 
     // Test 7 — Unauthenticated returns 401
     @Test
-    void getAll_Unauthenticated_ShouldReturn302()
+    void getAll_Unauthenticated_ShouldReturn401()
             throws Exception {
         mockMvc.perform(get("/api/countries"))
                 .andExpect(status().isUnauthorized());
