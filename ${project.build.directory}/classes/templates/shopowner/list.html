@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/base}">
+<body>
+<div layout:fragment="content">
+    <div class="d-flex justify-content-between
+                align-items-center mb-4">
+        <h2>🏪 Shop Owners</h2>
+        <a th:href="@{/shopowners/new}"
+           class="btn btn-primary-custom">
+            + Add New Shop Owner
+        </a>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Shop Name</th>
+                    <th>Owner Name</th>
+                    <th>Country</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="shopOwner : ${shopOwners}">
+                    <td th:text="${shopOwner.id}"></td>
+                    <td th:text="${shopOwner.shopName}">
+                    </td>
+                    <td th:text="${shopOwner.ownerName}">
+                    </td>
+                    <td th:text="${shopOwner.country != null}
+                            ? ${shopOwner.country.name}
+                            : 'N/A'"></td>
+                    <td th:text="${shopOwner.address}">
+                    </td>
+                    <td>
+                        <a th:href="@{/shopowners/edit/{id}
+                               (id=${shopOwner.id})}"
+                           class="btn btn-sm
+                               btn-primary-custom">
+                            Edit
+                        </a>
+                        <form sec:authorize="hasRole('ADMIN')"
+                              th:action="@{/shopowners/delete/{id}
+                              (id=${shopOwner.id})}"
+                              method="post"
+                              class="d-inline">
+                            <input type="hidden"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}"/>
+                            <button type="submit"
+                                    class="btn btn-sm btn-danger"
+                                    onclick="return confirm(
+                                    'Are you sure?')">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
