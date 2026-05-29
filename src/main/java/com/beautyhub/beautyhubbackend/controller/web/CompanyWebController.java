@@ -1,16 +1,18 @@
 package com.beautyhub.beautyhubbackend.controller.web;
 
 import com.beautyhub.beautyhubbackend.domain.Company;
+import com.beautyhub.beautyhubbackend.repository.CountryRepository;
+import com.beautyhub.beautyhubbackend.service.AbstractService;
 import com.beautyhub.beautyhubbackend.service.CompanyService;
 import com.beautyhub.beautyhubbackend.service.CountryService;
-import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/companies")
-public class CompanyWebController {
+public class CompanyWebController
+        extends AbstractWebController<Company> {
 
     private final CompanyService companyService;
     private final CountryService countryService;
@@ -25,15 +27,39 @@ public class CompanyWebController {
         this.countryRepository = countryRepository;
     }
 
-    // SHOW ALL COMPANIES
-    @GetMapping
-    public String findAll(Model model) {
-        model.addAttribute("companies",
-                companyService.findAll());
+    @Override
+    protected AbstractService<Company, Long>
+    getService() {
+        return companyService;
+    }
+
+    @Override
+    protected String getEntityName() {
+        return "company";
+    }
+
+    @Override
+    protected String getListView() {
         return "company/list";
     }
 
-    // SHOW ADD FORM
+    @Override
+    protected String getFormView() {
+        return "company/form";
+    }
+
+    @Override
+    protected String getRedirectUrl() {
+        return "/companies";
+    }
+
+    @Override
+    protected Company newEntity() {
+        return new Company();
+    }
+
+    // Override showForm to add countries dropdown
+    @Override
     @GetMapping("/new")
     public String showForm(Model model) {
         model.addAttribute("company",
@@ -43,7 +69,22 @@ public class CompanyWebController {
         return "company/form";
     }
 
-    // SAVE OR UPDATE
+    // Override showEditForm to add countries dropdown
+    @Override
+    @GetMapping("/edit/{id}")
+    public String showEditForm(
+            @PathVariable Long id,
+            Model model) {
+        companyService.findById(id)
+                .ifPresent(c ->
+                        model.addAttribute(
+                                "company", c));
+        model.addAttribute("countries",
+                countryService.findAll());
+        return "company/form";
+    }
+
+    // Save with country dropdown
     @PostMapping("/save")
     public String save(
             @ModelAttribute Company company,
@@ -59,27 +100,6 @@ public class CompanyWebController {
         } else {
             companyService.save(company);
         }
-        return "redirect:/companies";
-    }
-
-    // SHOW EDIT FORM
-    @GetMapping("/edit/{id}")
-    public String showEditForm(
-            @PathVariable Long id,
-            Model model) {
-        companyService.findById(id)
-                .ifPresent(c ->
-                        model.addAttribute(
-                                "company", c));
-        model.addAttribute("countries",
-                countryService.findAll());
-        return "company/form";
-    }
-
-    // DELETE
-    @PostMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-        companyService.deleteById(id);
         return "redirect:/companies";
     }
 }
