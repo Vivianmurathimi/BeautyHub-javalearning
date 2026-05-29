@@ -2,14 +2,14 @@ package com.beautyhub.beautyhubbackend.service;
 
 import com.beautyhub.beautyhubbackend.domain.Country;
 import com.beautyhub.beautyhubbackend.repository.CountryRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
-public class CountryService {
+public class CountryService
+        extends AbstractService<Country, Long> {
 
     private final CountryRepository countryRepository;
 
@@ -18,22 +18,13 @@ public class CountryService {
         this.countryRepository = countryRepository;
     }
 
-    // CREATE
-    public Country save(Country country) {
-        return countryRepository.save(country);
+    @Override
+    protected JpaRepository<Country, Long>
+    getRepository() {
+        return countryRepository;
     }
 
-    // READ ALL
-    public List<Country> findAll() {
-        return countryRepository.findAll();
-    }
-
-    // READ ONE
-    public Optional<Country> findById(Long id) {
-        return countryRepository.findById(id);
-    }
-
-    // UPDATE
+    @Override
     public Country update(Long id,
                           Country updatedCountry) {
         Country existing = countryRepository
@@ -44,14 +35,5 @@ public class CountryService {
         existing.setName(updatedCountry.getName());
         existing.setSign(updatedCountry.getSign());
         return countryRepository.save(existing);
-    }
-
-    // DELETE
-    public void deleteById(Long id) {
-        if (!countryRepository.existsById(id)) {
-            throw new RuntimeException(
-                    "Country not found: " + id);
-        }
-        countryRepository.deleteById(id);
     }
 }

@@ -4,14 +4,14 @@ import com.beautyhub.beautyhubbackend.domain.Company;
 import com.beautyhub.beautyhubbackend.domain.Country;
 import com.beautyhub.beautyhubbackend.repository.CompanyRepository;
 import com.beautyhub.beautyhubbackend.repository.CountryRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
-public class CompanyService {
+public class CompanyService
+        extends AbstractService<Company, Long> {
 
     private final CompanyRepository companyRepository;
     private final CountryRepository countryRepository;
@@ -23,22 +23,13 @@ public class CompanyService {
         this.countryRepository = countryRepository;
     }
 
-    // CREATE
-    public Company save(Company company) {
-        return companyRepository.save(company);
+    @Override
+    protected JpaRepository<Company, Long>
+    getRepository() {
+        return companyRepository;
     }
 
-    // READ ALL
-    public List<Company> findAll() {
-        return companyRepository.findAll();
-    }
-
-    // READ ONE
-    public Optional<Company> findById(Long id) {
-        return companyRepository.findById(id);
-    }
-
-    // UPDATE
+    @Override
     public Company update(Long id,
                           Company updatedCompany) {
         Company existing = companyRepository
@@ -48,9 +39,8 @@ public class CompanyService {
                                 "Company not found: " + id));
         existing.setName(updatedCompany.getName());
         existing.setTaxId(updatedCompany.getTaxId());
-        existing.setAddress(updatedCompany.getAddress());
-
-        // Update country if provided
+        existing.setAddress(
+                updatedCompany.getAddress());
         if (updatedCompany.getCountry() != null) {
             Country country = countryRepository
                     .findById(updatedCompany
@@ -61,14 +51,5 @@ public class CompanyService {
             existing.setCountry(country);
         }
         return companyRepository.save(existing);
-    }
-
-    // DELETE
-    public void deleteById(Long id) {
-        if (!companyRepository.existsById(id)) {
-            throw new RuntimeException(
-                    "Company not found: " + id);
-        }
-        companyRepository.deleteById(id);
     }
 }

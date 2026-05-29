@@ -4,14 +4,14 @@ import com.beautyhub.beautyhubbackend.domain.Country;
 import com.beautyhub.beautyhubbackend.domain.Person;
 import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import com.beautyhub.beautyhubbackend.repository.PersonRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
-public class PersonService {
+public class PersonService
+        extends AbstractService<Person, Long> {
 
     private final PersonRepository personRepository;
     private final CountryRepository countryRepository;
@@ -23,22 +23,13 @@ public class PersonService {
         this.countryRepository = countryRepository;
     }
 
-    // CREATE
-    public Person save(Person person) {
-        return personRepository.save(person);
+    @Override
+    protected JpaRepository<Person, Long>
+    getRepository() {
+        return personRepository;
     }
 
-    // READ ALL
-    public List<Person> findAll() {
-        return personRepository.findAll();
-    }
-
-    // READ ONE
-    public Optional<Person> findById(Long id) {
-        return personRepository.findById(id);
-    }
-
-    // UPDATE
+    @Override
     public Person update(Long id,
                          Person updatedPerson) {
         Person existing = personRepository
@@ -49,9 +40,8 @@ public class PersonService {
         existing.setName(updatedPerson.getName());
         existing.setPersonalId(
                 updatedPerson.getPersonalId());
-        existing.setAddress(updatedPerson.getAddress());
-
-        // Update country if provided
+        existing.setAddress(
+                updatedPerson.getAddress());
         if (updatedPerson.getCountry() != null) {
             Country country = countryRepository
                     .findById(updatedPerson
@@ -62,14 +52,5 @@ public class PersonService {
             existing.setCountry(country);
         }
         return personRepository.save(existing);
-    }
-
-    // DELETE
-    public void deleteById(Long id) {
-        if (!personRepository.existsById(id)) {
-            throw new RuntimeException(
-                    "Person not found: " + id);
-        }
-        personRepository.deleteById(id);
     }
 }
