@@ -4,14 +4,14 @@ import com.beautyhub.beautyhubbackend.domain.Country;
 import com.beautyhub.beautyhubbackend.domain.ShopOwner;
 import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import com.beautyhub.beautyhubbackend.repository.ShopOwnerRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
-public class ShopOwnerService {
+public class ShopOwnerService
+        extends AbstractService<ShopOwner, Long> {
 
     private final ShopOwnerRepository shopOwnerRepository;
     private final CountryRepository countryRepository;
@@ -23,22 +23,13 @@ public class ShopOwnerService {
         this.countryRepository = countryRepository;
     }
 
-    // CREATE
-    public ShopOwner save(ShopOwner shopOwner) {
-        return shopOwnerRepository.save(shopOwner);
+    @Override
+    protected JpaRepository<ShopOwner, Long>
+    getRepository() {
+        return shopOwnerRepository;
     }
 
-    // READ ALL
-    public List<ShopOwner> findAll() {
-        return shopOwnerRepository.findAll();
-    }
-
-    // READ ONE
-    public Optional<ShopOwner> findById(Long id) {
-        return shopOwnerRepository.findById(id);
-    }
-
-    // UPDATE
+    @Override
     public ShopOwner update(Long id,
                             ShopOwner updatedShopOwner) {
         ShopOwner existing = shopOwnerRepository
@@ -52,8 +43,6 @@ public class ShopOwnerService {
                 updatedShopOwner.getOwnerName());
         existing.setAddress(
                 updatedShopOwner.getAddress());
-
-        // Update country if provided
         if (updatedShopOwner.getCountry() != null) {
             Country country = countryRepository
                     .findById(updatedShopOwner
@@ -64,14 +53,5 @@ public class ShopOwnerService {
             existing.setCountry(country);
         }
         return shopOwnerRepository.save(existing);
-    }
-
-    // DELETE
-    public void deleteById(Long id) {
-        if (!shopOwnerRepository.existsById(id)) {
-            throw new RuntimeException(
-                    "ShopOwner not found: " + id);
-        }
-        shopOwnerRepository.deleteById(id);
     }
 }

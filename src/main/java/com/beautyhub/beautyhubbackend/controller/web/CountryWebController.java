@@ -1,6 +1,7 @@
 package com.beautyhub.beautyhubbackend.controller.web;
 
 import com.beautyhub.beautyhubbackend.domain.Country;
+import com.beautyhub.beautyhubbackend.service.AbstractService;
 import com.beautyhub.beautyhubbackend.service.CountryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/countries")
-public class CountryWebController {
+public class CountryWebController
+        extends AbstractWebController<Country> {
 
     private final CountryService countryService;
 
@@ -17,23 +19,38 @@ public class CountryWebController {
         this.countryService = countryService;
     }
 
-    // SHOW ALL COUNTRIES
-    @GetMapping
-    public String findAll(Model model) {
-        model.addAttribute("countries",
-                countryService.findAll());
+    @Override
+    protected AbstractService<Country, Long>
+    getService() {
+        return countryService;
+    }
+
+    @Override
+    protected String getEntityName() {
+        return "country";
+    }
+
+    @Override
+    protected String getListView() {
         return "country/list";
     }
 
-    // SHOW ADD FORM
-    @GetMapping("/new")
-    public String showForm(Model model) {
-        model.addAttribute("country",
-                new Country());
+    @Override
+    protected String getFormView() {
         return "country/form";
     }
 
-    // SAVE OR UPDATE
+    @Override
+    protected String getRedirectUrl() {
+        return "/countries";
+    }
+
+    @Override
+    protected Country newEntity() {
+        return new Country();
+    }
+
+    // Save is unique — no dropdown for Country
     @PostMapping("/save")
     public String save(
             @ModelAttribute Country country) {
@@ -43,25 +60,6 @@ public class CountryWebController {
         } else {
             countryService.save(country);
         }
-        return "redirect:/countries";
-    }
-
-    // SHOW EDIT FORM
-    @GetMapping("/edit/{id}")
-    public String showEditForm(
-            @PathVariable Long id,
-            Model model) {
-        countryService.findById(id)
-                .ifPresent(c ->
-                        model.addAttribute(
-                                "country", c));
-        return "country/form";
-    }
-
-    // DELETE
-    @PostMapping("/delete/{id}")
-    public String delete(@PathVariable Long id) {
-        countryService.deleteById(id);
         return "redirect:/countries";
     }
 }
