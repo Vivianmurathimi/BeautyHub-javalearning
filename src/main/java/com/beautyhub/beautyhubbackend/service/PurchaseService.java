@@ -1,129 +1,79 @@
 package com.beautyhub.beautyhubbackend.service;
 
-import com.beautyhub.beautyhubbackend.domain.Company;
-import com.beautyhub.beautyhubbackend.domain.Product;
 import com.beautyhub.beautyhubbackend.domain.Purchase;
-import com.beautyhub.beautyhubbackend.domain.ShopOwner;
-import com.beautyhub.beautyhubbackend.repository.CompanyRepository;
-import com.beautyhub.beautyhubbackend.repository.ProductRepository;
+import com.beautyhub.beautyhubbackend.repository.AbstractRepository;
 import com.beautyhub.beautyhubbackend.repository.PurchaseRepository;
-import com.beautyhub.beautyhubbackend.repository.ShopOwnerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
-public class PurchaseService {
+public class PurchaseService
+        extends AbstractService<Purchase, Long> {
 
-    private final PurchaseRepository purchaseRepository;
-    private final ShopOwnerRepository shopOwnerRepository;
-    private final ProductRepository productRepository;
-    private final CompanyRepository companyRepository;
+    private final PurchaseRepository
+            purchaseRepository;
 
     public PurchaseService(
-            PurchaseRepository purchaseRepository,
-            ShopOwnerRepository shopOwnerRepository,
-            ProductRepository productRepository,
-            CompanyRepository companyRepository) {
+            PurchaseRepository purchaseRepository) {
         this.purchaseRepository = purchaseRepository;
-        this.shopOwnerRepository = shopOwnerRepository;
-        this.productRepository = productRepository;
-        this.companyRepository = companyRepository;
     }
 
-    // CREATE
-    public Purchase save(Purchase purchase) {
-        // Auto calculate total price
-        purchase.setTotalPrice(
-                purchase.getUnitPrice().multiply(
-                        BigDecimal.valueOf(
-                                purchase.getQuantity())));
-        return purchaseRepository.save(purchase);
+    @Override
+    protected AbstractRepository<Purchase>
+    getRepository() {
+        return purchaseRepository;
     }
 
-    // READ ALL
-    public List<Purchase> findAll() {
-        return purchaseRepository.findAll();
-    }
-
-    // READ ONE
-    public Optional<Purchase> findById(Long id) {
-        return purchaseRepository.findById(id);
-    }
-
-    // READ BY SHOP OWNER
+    // Extra methods
     public List<Purchase> findByShopOwnerId(
             Long shopOwnerId) {
         return purchaseRepository
                 .findByShopOwnerId(shopOwnerId);
     }
 
-    // READ BY COMPANY
     public List<Purchase> findByCompanyId(
             Long companyId) {
         return purchaseRepository
                 .findByCompanyId(companyId);
     }
 
-    // UPDATE
+    // Override save to auto calculate total
+    @Override
+    public Purchase save(Purchase purchase) {
+        purchase.setTotalPrice(
+                purchase.getUnitPrice()
+                        .multiply(BigDecimal.valueOf(
+                                purchase.getQuantity())));
+        return purchaseRepository.save(purchase);
+    }
+
+    @Override
     public Purchase update(Long id,
-                           Purchase updatedPurchase) {
+                           Purchase updated) {
         Purchase existing = purchaseRepository
                 .findById(id)
                 .orElseThrow(() ->
                         new RuntimeException(
                                 "Purchase not found: " + id));
-        existing.setQuantity(
-                updatedPurchase.getQuantity());
-        existing.setUnitPrice(
-                updatedPurchase.getUnitPrice());
-
-        // Recalculate total
+        existing.setQuantity(updated.getQuantity());
+        existing.setUnitPrice(updated.getUnitPrice());
         existing.setTotalPrice(
-                updatedPurchase.getUnitPrice()
+                updated.getUnitPrice()
                         .multiply(BigDecimal.valueOf(
-                                updatedPurchase.getQuantity())));
-
-        // Update relations if provided
-        if (updatedPurchase.getShopOwner() != null) {
-            ShopOwner shopOwner = shopOwnerRepository
-                    .findById(updatedPurchase
-                            .getShopOwner().getId())
-                    .orElseThrow(() ->
-                            new RuntimeException(
-                                    "ShopOwner not found"));
-            existing.setShopOwner(shopOwner);
+                                updated.getQuantity())));
+        if (updated.getShopOwner() != null) {
+            existing.setShopOwner(
+                    updated.getShopOwner());
         }
-        if (updatedPurchase.getProduct() != null) {
-            Product product = productRepository
-                    .findById(updatedPurchase
-                            .getProduct().getId())
-                    .orElseThrow(() ->
-                            new RuntimeException(
-                                    "Product not found"));
-            existing.setProduct(product);
+        if (updated.getProduct() != null) {
+            existing.setProduct(updated.getProduct());
         }
-        if (updatedPurchase.getCompany() != null) {
-            Company company = companyRepository
-                    .findById(updatedPurchase
-                            .getCompany().getId())
-                    .orElseThrow(() ->
-                            new RuntimeException(
-                                    "Company not found"));
-            existing.setCompany(company);
+        if (updated.getCompany() != null) {
+            existing.setCompany(updated.getCompany());
         }
         return purchaseRepository.save(existing);
-    }
-
-    // DELETE
-    public void deleteById(Long id) {
-        if (!purchaseRepository.existsById(id)) {
-            throw new RuntimeException(
-                    "Purchase not found: " + id);
-        }
-        purchaseRepository.deleteById(id);
     }
 }

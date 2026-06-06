@@ -1,8 +1,8 @@
 package com.beautyhub.beautyhubbackend.service;
 
 import com.beautyhub.beautyhubbackend.domain.Country;
+import com.beautyhub.beautyhubbackend.repository.AbstractRepository;
 import com.beautyhub.beautyhubbackend.repository.CountryRepository;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +19,7 @@ public class CountryService
     }
 
     @Override
-    protected JpaRepository<Country, Long>
+    protected AbstractRepository<Country>
     getRepository() {
         return countryRepository;
     }

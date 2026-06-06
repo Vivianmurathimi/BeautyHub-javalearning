@@ -1,7 +1,15 @@
 package com.beautyhub.beautyhubbackend.service;
 
-import com.beautyhub.beautyhubbackend.domain.*;
-import com.beautyhub.beautyhubbackend.repository.*;
+import com.beautyhub.beautyhubbackend.domain.Company;
+import com.beautyhub.beautyhubbackend.domain.Person;
+import com.beautyhub.beautyhubbackend.domain.Product;
+import com.beautyhub.beautyhubbackend.domain.Sale;
+import com.beautyhub.beautyhubbackend.domain.ShopOwner;
+import com.beautyhub.beautyhubbackend.repository.CompanyRepository;
+import com.beautyhub.beautyhubbackend.repository.PersonRepository;
+import com.beautyhub.beautyhubbackend.repository.ProductRepository;
+import com.beautyhub.beautyhubbackend.repository.SaleRepository;
+import com.beautyhub.beautyhubbackend.repository.ShopOwnerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

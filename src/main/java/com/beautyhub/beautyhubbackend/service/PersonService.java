@@ -1,10 +1,9 @@
 package com.beautyhub.beautyhubbackend.service;
 
-import com.beautyhub.beautyhubbackend.domain.Country;
 import com.beautyhub.beautyhubbackend.domain.Person;
+import com.beautyhub.beautyhubbackend.repository.AbstractRepository;
 import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import com.beautyhub.beautyhubbackend.repository.PersonRepository;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,7 @@ public class PersonService
     }
 
     @Override
-    protected JpaRepository<Person, Long>
+    protected AbstractRepository<Person>
     getRepository() {
         return personRepository;
     }
@@ -43,13 +42,10 @@ public class PersonService
         existing.setAddress(
                 updatedPerson.getAddress());
         if (updatedPerson.getCountry() != null) {
-            Country country = countryRepository
-                    .findById(updatedPerson
-                            .getCountry().getId())
-                    .orElseThrow(() ->
-                            new RuntimeException(
-                                    "Country not found"));
-            existing.setCountry(country);
+            countryRepository.findById(
+                            updatedPerson
+                                    .getCountry().getId())
+                    .ifPresent(existing::setCountry);
         }
         return personRepository.save(existing);
     }

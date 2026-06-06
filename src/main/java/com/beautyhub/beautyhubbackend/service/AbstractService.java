@@ -1,9 +1,8 @@
 package com.beautyhub.beautyhubbackend.service;
 
 import com.beautyhub.beautyhubbackend.domain.AbstractDomain;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.beautyhub.beautyhubbackend.repository.AbstractRepository;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -13,14 +12,11 @@ public abstract class AbstractService
                 ID extends Long> {
 
     // Each service provides its own repository
-    protected abstract JpaRepository<T, ID>
+    protected abstract AbstractRepository<T>
     getRepository();
 
     // Each service implements its own update
-    // because fields are different
     public abstract T update(ID id, T entity);
-
-    // ─── IDENTICAL IN ALL SERVICES ───────────
 
     // CREATE
     public T save(T entity) {
