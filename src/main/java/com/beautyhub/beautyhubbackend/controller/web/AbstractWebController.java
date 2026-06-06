@@ -2,6 +2,7 @@ package com.beautyhub.beautyhubbackend.controller.web;
 
 import com.beautyhub.beautyhubbackend.domain.AbstractDomain;
 import com.beautyhub.beautyhubbackend.service.AbstractService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,6 +65,7 @@ public abstract class AbstractWebController
 
     // DELETE
     @PostMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String delete(
             @PathVariable Long id) {
         getService().deleteById(id);

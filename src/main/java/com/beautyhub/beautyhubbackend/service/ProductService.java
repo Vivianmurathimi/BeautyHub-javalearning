@@ -1,10 +1,9 @@
 package com.beautyhub.beautyhubbackend.service;
 
-import com.beautyhub.beautyhubbackend.domain.Company;
 import com.beautyhub.beautyhubbackend.domain.Product;
+import com.beautyhub.beautyhubbackend.repository.AbstractRepository;
 import com.beautyhub.beautyhubbackend.repository.CompanyRepository;
 import com.beautyhub.beautyhubbackend.repository.ProductRepository;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -25,12 +24,11 @@ public class ProductService
     }
 
     @Override
-    protected JpaRepository<Product, Long>
+    protected AbstractRepository<Product>
     getRepository() {
         return productRepository;
     }
 
-    // Extra method specific to Product
     public List<Product> findByCompanyId(
             Long companyId) {
         return productRepository
@@ -50,13 +48,10 @@ public class ProductService
                 updatedProduct.getDescription());
         existing.setPrice(updatedProduct.getPrice());
         if (updatedProduct.getCompany() != null) {
-            Company company = companyRepository
-                    .findById(updatedProduct
-                            .getCompany().getId())
-                    .orElseThrow(() ->
-                            new RuntimeException(
-                                    "Company not found"));
-            existing.setCompany(company);
+            companyRepository.findById(
+                            updatedProduct
+                                    .getCompany().getId())
+                    .ifPresent(existing::setCompany);
         }
         return productRepository.save(existing);
     }
