@@ -27,8 +27,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="shopOwner : ${shopOwners}">
-                    <td th:text="${shopOwner.id}">
-                    </td>
+                    <td th:text="${shopOwner.id}"></td>
                     <td th:text="${shopOwner.shopName}">
                     </td>
                     <td th:text="${shopOwner.ownerName}">
@@ -57,7 +56,10 @@
                             <button type="submit"
                                     class="btn btn-sm btn-danger"
                                     onclick="return confirm(
-                                    'Are you sure?')">
+                                    'Are you sure you want to delete this shop owner?\n\n' +
+                                    'WARNING: You cannot delete a shop owner\n' +
+                                    'that has sales or purchases linked to it.\n\n' +
+                                    'Make sure to remove all related records first!')">
                                 Delete
                             </button>
                         </form>
