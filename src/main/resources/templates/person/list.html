@@ -54,7 +54,10 @@
                             <button type="submit"
                                     class="btn btn-sm btn-danger"
                                     onclick="return confirm(
-                                    'Are you sure?')">
+                                    'Are you sure you want to delete this person?\n\n' +
+                                    'WARNING: You cannot delete a person\n' +
+                                    'that has sales linked to it.\n\n' +
+                                    'Make sure to remove all related records first!')">
                                 Delete
                             </button>
                         </form>

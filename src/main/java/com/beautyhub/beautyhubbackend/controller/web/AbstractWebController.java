@@ -13,9 +13,13 @@ public abstract class AbstractWebController
     getService();
 
     protected abstract String getEntityName();
+
     protected abstract String getListView();
+
     protected abstract String getFormView();
+
     protected abstract String getRedirectUrl();
+
     protected abstract T newEntity();
 
     // SHOW ALL — overridden in each controller
@@ -50,6 +54,7 @@ public abstract class AbstractWebController
     }
 
     // DELETE — shared for ALL controllers
+
     @PostMapping("/delete/{id}")
     public String delete(
             @PathVariable Long id,
