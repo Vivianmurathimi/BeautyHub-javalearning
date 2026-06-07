@@ -2,37 +2,23 @@ package com.beautyhub.beautyhubbackend.controller.web;
 
 import com.beautyhub.beautyhubbackend.domain.AbstractDomain;
 import com.beautyhub.beautyhubbackend.service.AbstractService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 public abstract class AbstractWebController
         <T extends AbstractDomain> {
 
-    // ─── Each controller provides these ──────
-
-    // The service to use
     protected abstract AbstractService<T, Long>
     getService();
 
-    // Model attribute name e.g. "country"
     protected abstract String getEntityName();
-
-    // List view e.g. "country/list"
     protected abstract String getListView();
-
-    // Form view e.g. "country/form"
     protected abstract String getFormView();
-
-    // Redirect URL e.g. "/countries"
     protected abstract String getRedirectUrl();
-
-    // New empty entity e.g. new Country()
     protected abstract T newEntity();
 
-    // ─── IDENTICAL IN ALL WEB CONTROLLERS ────
-
-    // SHOW ALL
+    // SHOW ALL — overridden in each controller
     @GetMapping
     public String findAll(Model model) {
         model.addAttribute(
@@ -63,12 +49,15 @@ public abstract class AbstractWebController
         return getFormView();
     }
 
-    // DELETE
+    // DELETE — shared for ALL controllers
     @PostMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public String delete(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
         getService().deleteById(id);
+        redirectAttributes.addFlashAttribute(
+                "successMessage",
+                "✅ Deleted successfully!");
         return "redirect:" + getRedirectUrl();
     }
 }

@@ -5,9 +5,12 @@ import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import com.beautyhub.beautyhubbackend.service.AbstractService;
 import com.beautyhub.beautyhubbackend.service.CompanyService;
 import com.beautyhub.beautyhubbackend.service.CountryService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/companies")
@@ -58,7 +61,14 @@ public class CompanyWebController
         return new Company();
     }
 
-    // Override showForm to add countries dropdown
+    @Override
+    @GetMapping
+    public String findAll(Model model) {
+        model.addAttribute("companies",
+                companyService.findAll());
+        return "company/list";
+    }
+
     @Override
     @GetMapping("/new")
     public String showForm(Model model) {
@@ -69,7 +79,6 @@ public class CompanyWebController
         return "company/form";
     }
 
-    // Override showEditForm to add countries dropdown
     @Override
     @GetMapping("/edit/{id}")
     public String showEditForm(
@@ -84,21 +93,53 @@ public class CompanyWebController
         return "company/form";
     }
 
-    // Save with country dropdown
     @PostMapping("/save")
     public String save(
-            @ModelAttribute Company company,
+            @Valid @ModelAttribute Company company,
+            BindingResult result,
             @RequestParam(required = false)
-            Long countryId) {
+            Long countryId,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        // Set country from dropdown first
         if (countryId != null) {
             countryRepository.findById(countryId)
                     .ifPresent(company::setCountry);
+        } else {
+            result.rejectValue("country",
+                    "error.country",
+                    "Country is required");
         }
+
+        // Check errors excluding country
+        // if country was selected
+        boolean hasErrors = result
+                .getFieldErrors()
+                .stream()
+                .anyMatch(e ->
+                        !e.getField().equals("country")
+                                || countryId == null);
+
+        if (hasErrors) {
+            model.addAttribute("errors",
+                    result.getAllErrors());
+            model.addAttribute("countries",
+                    countryService.findAll());
+            return "company/form";
+        }
+
         if (company.getId() != null) {
             companyService.update(
                     company.getId(), company);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "✅ Company updated successfully!");
         } else {
             companyService.save(company);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "✅ Company added successfully!");
         }
         return "redirect:/companies";
     }

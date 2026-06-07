@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!-- Validation errors -->
+<div th:fragment="validationErrors(errors)"
+     th:if="${errors != null and
+             not #lists.isEmpty(errors)}"
+     class="alert alert-danger"
+     role="alert">
+    <strong>⚠️ Please fix the following:</strong>
+    <ul class="mb-0 mt-2">
+        <li th:each="error : ${errors}"
+            th:text="${error.defaultMessage}">
+        </li>
+    </ul>
+</div>
+
+<!-- Page header with add button -->
+<div th:fragment="pageHeader(title, addUrl, addLabel)"
+     class="d-flex justify-content-between
+            align-items-center mb-4">
+    <h2 th:text="${title}"></h2>
+    <a th:href="${addUrl}"
+       class="btn btn-primary-custom"
+       th:text="${addLabel}">
+    </a>
+</div>
+
+<!-- Form buttons -->
+<div th:fragment="formButtons(saveLabel, cancelUrl)"
+     class="d-flex gap-2 mt-3">
+    <button type="submit"
+            class="btn btn-primary-custom"
+            th:text="${saveLabel}">
+    </button>
+    <a th:href="${cancelUrl}"
+       class="btn btn-secondary">
+        Cancel
+    </a>
+</div>
+
+<!-- Required note -->
+<p th:fragment="requiredNote"
+   class="text-muted mt-2 mb-3"
+   style="font-size: 0.85rem;">
+    <span style="color:#dc2626;">*</span>
+    Required fields
+</p>
+
+</body>
+</html>

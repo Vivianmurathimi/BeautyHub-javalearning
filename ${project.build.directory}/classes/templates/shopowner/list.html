@@ -5,14 +5,13 @@
       layout:decorate="~{layout/base}">
 <body>
 <div layout:fragment="content">
-    <div class="d-flex justify-content-between
-                align-items-center mb-4">
-        <h2>🏪 Shop Owners</h2>
-        <a th:href="@{/shopowners/new}"
-           class="btn btn-primary-custom">
-            + Add New Shop Owner
-        </a>
+
+    <div th:replace="~{fragments/alerts ::
+            pageHeader('Shop Owners',
+            '/shopowners/new',
+            '+ Add New Shop Owner')}">
     </div>
+
     <div class="card">
         <div class="card-body">
             <table class="table table-hover">
@@ -28,26 +27,28 @@
                 </thead>
                 <tbody>
                 <tr th:each="shopOwner : ${shopOwners}">
-                    <td th:text="${shopOwner.id}"></td>
+                    <td th:text="${shopOwner.id}">
+                    </td>
                     <td th:text="${shopOwner.shopName}">
                     </td>
                     <td th:text="${shopOwner.ownerName}">
                     </td>
-                    <td th:text="${shopOwner.country != null}
-                            ? ${shopOwner.country.name}
-                            : 'N/A'"></td>
+                    <td th:text="${shopOwner.country != null ?
+                            shopOwner.country.name :
+                            'N/A'}">
+                    </td>
                     <td th:text="${shopOwner.address}">
                     </td>
                     <td>
                         <a th:href="@{/shopowners/edit/{id}
-                               (id=${shopOwner.id})}"
+                                (id=${shopOwner.id})}"
                            class="btn btn-sm
-                               btn-primary-custom">
+                           btn-primary-custom">
                             Edit
                         </a>
                         <form sec:authorize="hasRole('ADMIN')"
                               th:action="@{/shopowners/delete/{id}
-                              (id=${shopOwner.id})}"
+                                      (id=${shopOwner.id})}"
                               method="post"
                               class="d-inline">
                             <input type="hidden"

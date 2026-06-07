@@ -5,9 +5,12 @@ import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import com.beautyhub.beautyhubbackend.service.AbstractService;
 import com.beautyhub.beautyhubbackend.service.CountryService;
 import com.beautyhub.beautyhubbackend.service.PersonService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/persons")
@@ -58,7 +61,14 @@ public class PersonWebController
         return new Person();
     }
 
-    // Override showForm to add countries dropdown
+    @Override
+    @GetMapping
+    public String findAll(Model model) {
+        model.addAttribute("persons",
+                personService.findAll());
+        return "person/list";
+    }
+
     @Override
     @GetMapping("/new")
     public String showForm(Model model) {
@@ -69,7 +79,6 @@ public class PersonWebController
         return "person/form";
     }
 
-    // Override showEditForm to add countries dropdown
     @Override
     @GetMapping("/edit/{id}")
     public String showEditForm(
@@ -84,21 +93,50 @@ public class PersonWebController
         return "person/form";
     }
 
-    // Save with country dropdown
     @PostMapping("/save")
     public String save(
-            @ModelAttribute Person person,
+            @Valid @ModelAttribute Person person,
+            BindingResult result,
             @RequestParam(required = false)
-            Long countryId) {
+            Long countryId,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
         if (countryId != null) {
             countryRepository.findById(countryId)
                     .ifPresent(person::setCountry);
+        } else {
+            result.rejectValue("country",
+                    "error.country",
+                    "Country is required");
         }
+
+        boolean hasErrors = result
+                .getFieldErrors()
+                .stream()
+                .anyMatch(e ->
+                        !e.getField().equals("country")
+                                || countryId == null);
+
+        if (hasErrors) {
+            model.addAttribute("errors",
+                    result.getAllErrors());
+            model.addAttribute("countries",
+                    countryService.findAll());
+            return "person/form";
+        }
+
         if (person.getId() != null) {
             personService.update(
                     person.getId(), person);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "✅ Person updated successfully!");
         } else {
             personService.save(person);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "✅ Person added successfully!");
         }
         return "redirect:/persons";
     }

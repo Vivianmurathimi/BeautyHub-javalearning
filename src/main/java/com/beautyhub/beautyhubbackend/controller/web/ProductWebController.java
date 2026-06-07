@@ -5,9 +5,12 @@ import com.beautyhub.beautyhubbackend.repository.CompanyRepository;
 import com.beautyhub.beautyhubbackend.service.AbstractService;
 import com.beautyhub.beautyhubbackend.service.CompanyService;
 import com.beautyhub.beautyhubbackend.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/products")
@@ -58,7 +61,14 @@ public class ProductWebController
         return new Product();
     }
 
-    // Override showForm to add companies dropdown
+    @Override
+    @GetMapping
+    public String findAll(Model model) {
+        model.addAttribute("products",
+                productService.findAll());
+        return "product/list";
+    }
+
     @Override
     @GetMapping("/new")
     public String showForm(Model model) {
@@ -69,7 +79,6 @@ public class ProductWebController
         return "product/form";
     }
 
-    // Override showEditForm to add companies dropdown
     @Override
     @GetMapping("/edit/{id}")
     public String showEditForm(
@@ -84,21 +93,50 @@ public class ProductWebController
         return "product/form";
     }
 
-    // Save with company dropdown
     @PostMapping("/save")
     public String save(
-            @ModelAttribute Product product,
+            @Valid @ModelAttribute Product product,
+            BindingResult result,
             @RequestParam(required = false)
-            Long companyId) {
+            Long companyId,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
         if (companyId != null) {
             companyRepository.findById(companyId)
                     .ifPresent(product::setCompany);
+        } else {
+            result.rejectValue("company",
+                    "error.company",
+                    "Company is required");
         }
+
+        boolean hasErrors = result
+                .getFieldErrors()
+                .stream()
+                .anyMatch(e ->
+                        !e.getField().equals("company")
+                                || companyId == null);
+
+        if (hasErrors) {
+            model.addAttribute("errors",
+                    result.getAllErrors());
+            model.addAttribute("companies",
+                    companyService.findAll());
+            return "product/form";
+        }
+
         if (product.getId() != null) {
             productService.update(
                     product.getId(), product);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "✅ Product updated successfully!");
         } else {
             productService.save(product);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "✅ Product added successfully!");
         }
         return "redirect:/products";
     }
