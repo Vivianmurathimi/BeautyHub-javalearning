@@ -5,14 +5,13 @@
       layout:decorate="~{layout/base}">
 <body>
 <div layout:fragment="content">
-    <div class="d-flex justify-content-between
-                align-items-center mb-4">
-        <h2>🌍 Countries</h2>
-        <a th:href="@{/countries/new}"
-           class="btn btn-primary-custom">
-            + Add New Country
-        </a>
+
+    <div th:replace="~{fragments/alerts ::
+            pageHeader('🌍 Countries',
+            '/countries/new',
+            '+ Add New Country')}">
     </div>
+
     <div class="card">
         <div class="card-body">
             <table class="table table-hover">
@@ -21,7 +20,6 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>Sign</th>
-                    <th>Created</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -30,22 +28,16 @@
                     <td th:text="${country.id}"></td>
                     <td th:text="${country.name}"></td>
                     <td th:text="${country.sign}"></td>
-                    <td th:text="${#temporals.format(
-                        country.created,
-                        'dd-MM-yyyy')}">
-                    </td>
                     <td>
                         <a th:href="@{/countries/edit/{id}
-                               (id=${country.id})}"
+                                (id=${country.id})}"
                            class="btn btn-sm
-                               btn-primary-custom">
+                           btn-primary-custom">
                             Edit
                         </a>
-
-                        <!-- ADMIN ONLY DELETE -->
                         <form sec:authorize="hasRole('ADMIN')"
                               th:action="@{/countries/delete/{id}
-                              (id=${country.id})}"
+                                      (id=${country.id})}"
                               method="post"
                               class="d-inline">
                             <input type="hidden"
@@ -58,7 +50,6 @@
                                 Delete
                             </button>
                         </form>
-
                     </td>
                 </tr>
                 </tbody>

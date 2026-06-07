@@ -5,9 +5,12 @@ import com.beautyhub.beautyhubbackend.repository.CountryRepository;
 import com.beautyhub.beautyhubbackend.service.AbstractService;
 import com.beautyhub.beautyhubbackend.service.CountryService;
 import com.beautyhub.beautyhubbackend.service.ShopOwnerService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/shopowners")
@@ -58,7 +61,14 @@ public class ShopOwnerWebController
         return new ShopOwner();
     }
 
-    // Override showForm to add countries dropdown
+    @Override
+    @GetMapping
+    public String findAll(Model model) {
+        model.addAttribute("shopOwners",
+                shopOwnerService.findAll());
+        return "shopowner/list";
+    }
+
     @Override
     @GetMapping("/new")
     public String showForm(Model model) {
@@ -69,7 +79,6 @@ public class ShopOwnerWebController
         return "shopowner/form";
     }
 
-    // Override showEditForm to add countries dropdown
     @Override
     @GetMapping("/edit/{id}")
     public String showEditForm(
@@ -84,21 +93,50 @@ public class ShopOwnerWebController
         return "shopowner/form";
     }
 
-    // Save with country dropdown
     @PostMapping("/save")
     public String save(
-            @ModelAttribute ShopOwner shopOwner,
+            @Valid @ModelAttribute ShopOwner shopOwner,
+            BindingResult result,
             @RequestParam(required = false)
-            Long countryId) {
+            Long countryId,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
         if (countryId != null) {
             countryRepository.findById(countryId)
                     .ifPresent(shopOwner::setCountry);
+        } else {
+            result.rejectValue("country",
+                    "error.country",
+                    "Country is required");
         }
+
+        boolean hasErrors = result
+                .getFieldErrors()
+                .stream()
+                .anyMatch(e ->
+                        !e.getField().equals("country")
+                                || countryId == null);
+
+        if (hasErrors) {
+            model.addAttribute("errors",
+                    result.getAllErrors());
+            model.addAttribute("countries",
+                    countryService.findAll());
+            return "shopowner/form";
+        }
+
         if (shopOwner.getId() != null) {
             shopOwnerService.update(
                     shopOwner.getId(), shopOwner);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "✅ Shop Owner updated successfully!");
         } else {
             shopOwnerService.save(shopOwner);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "✅ Shop Owner added successfully!");
         }
         return "redirect:/shopowners";
     }

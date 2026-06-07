@@ -5,14 +5,13 @@
       layout:decorate="~{layout/base}">
 <body>
 <div layout:fragment="content">
-    <div class="d-flex justify-content-between
-                align-items-center mb-4">
-        <h2>🏢 Companies</h2>
-        <a th:href="@{/companies/new}"
-           class="btn btn-primary-custom">
-            + Add New Company
-        </a>
+
+    <div th:replace="~{fragments/alerts ::
+            pageHeader('🏢 Companies',
+            '/companies/new',
+            '+ Add New Company')}">
     </div>
+
     <div class="card">
         <div class="card-body">
             <table class="table table-hover">
@@ -31,20 +30,21 @@
                     <td th:text="${company.id}"></td>
                     <td th:text="${company.name}"></td>
                     <td th:text="${company.taxId}"></td>
-                    <td th:text="${company.country != null}
-                            ? ${company.country.name}
-                            : 'N/A'"></td>
+                    <td th:text="${company.country != null ?
+                            company.country.name :
+                            'N/A'}">
+                    </td>
                     <td th:text="${company.address}"></td>
                     <td>
                         <a th:href="@{/companies/edit/{id}
-                               (id=${company.id})}"
+                                (id=${company.id})}"
                            class="btn btn-sm
-                               btn-primary-custom">
+                           btn-primary-custom">
                             Edit
                         </a>
                         <form sec:authorize="hasRole('ADMIN')"
                               th:action="@{/companies/delete/{id}
-                              (id=${company.id})}"
+                                      (id=${company.id})}"
                               method="post"
                               class="d-inline">
                             <input type="hidden"
