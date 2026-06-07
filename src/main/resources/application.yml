@@ -46,8 +46,10 @@ server:
 # LOGGING
 logging:
   level:
+    root: INFO
     org:
       springframework:
-        security: DEBUG
+        security: WARN
+        web: WARN
     com:
       beautyhub: DEBUG
