@@ -7,7 +7,7 @@
 <div layout:fragment="content">
 
     <div th:replace="~{fragments/alerts ::
-            pageHeader('🏢 Companies',
+            pageHeader('Companies',
             '/companies/new',
             '+ Add New Company')}">
     </div>
@@ -53,7 +53,10 @@
                             <button type="submit"
                                     class="btn btn-sm btn-danger"
                                     onclick="return confirm(
-                                    'Are you sure?')">
+                                    'Are you sure you want to delete this company?\n\n' +
+                                    'WARNING: You cannot delete a company\n' +
+                                    'that has products linked to it.\n\n' +
+                                    'Make sure to remove all related records first!')">
                                 Delete
                             </button>
                         </form>
