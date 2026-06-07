@@ -10,13 +10,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,91 +38,147 @@ class ProductServiceTest {
         company = new Company();
         company.setId(1L);
         company.setName("ORS Cosmetics");
+        company.setTaxId("TAX001");
+        company.setAddress("123 Beauty Ave");
 
         product = new Product();
         product.setId(1L);
         product.setName("Hair Relaxer");
+        product.setDescription("Professional kit");
         product.setPrice(new BigDecimal("29.99"));
         product.setCompany(company);
     }
 
-    // Test 1 — findAll returns list
+    // Test 1 — save returns saved product
     @Test
-    void findAll_ShouldReturnAllProducts() {
-        // GIVEN
+    void save_ShouldReturnSavedProduct() {
+        when(productRepository.save(any()))
+                .thenReturn(product);
+
+        Product result =
+                productService.save(product);
+
+        assertNotNull(result);
+        assertEquals("Hair Relaxer",
+                result.getName());
+        assertEquals(new BigDecimal("29.99"),
+                result.getPrice());
+        verify(productRepository, times(1))
+                .save(product);
+    }
+
+    // Test 2 — findAll returns list
+    @Test
+    void findAll_ShouldReturnList() {
         when(productRepository.findAll())
                 .thenReturn(Arrays.asList(product));
 
-        // WHEN
         List<Product> result =
                 productService.findAll();
 
-        // THEN
+        assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("Hair Relaxer",
                 result.get(0).getName());
     }
 
-    // Test 2 — findById returns product
+    // Test 3 — findById returns product
     @Test
     void findById_ShouldReturnProduct() {
-        // GIVEN
         when(productRepository.findById(1L))
                 .thenReturn(Optional.of(product));
 
-        // WHEN
         Optional<Product> result =
                 productService.findById(1L);
 
-        // THEN
         assertTrue(result.isPresent());
         assertEquals("Hair Relaxer",
                 result.get().getName());
     }
 
-    // Test 3 — save works
+    // Test 4 — findById returns empty
     @Test
-    void save_ShouldSaveProduct() {
-        // GIVEN
-        when(productRepository.save(product))
-                .thenReturn(product);
+    void findById_ShouldReturnEmpty_WhenNotFound() {
+        when(productRepository.findById(99L))
+                .thenReturn(Optional.empty());
 
-        // WHEN
-        Product result =
-                productService.save(product);
+        Optional<Product> result =
+                productService.findById(99L);
 
-        // THEN
-        assertNotNull(result);
-        assertEquals("Hair Relaxer",
-                result.getName());
+        assertFalse(result.isPresent());
     }
 
-    // Test 4 — findByCompanyId works
+    // Test 5 — findByCompanyId returns list
     @Test
-    void findByCompanyId_ShouldReturnProducts() {
-        // GIVEN
-        when(productRepository.findByCompanyId(1L))
+    void findByCompanyId_ShouldReturnList() {
+        when(productRepository
+                .findByCompanyId(1L))
                 .thenReturn(Arrays.asList(product));
 
-        // WHEN
         List<Product> result =
                 productService.findByCompanyId(1L);
 
-        // THEN
+        assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("Hair Relaxer",
                 result.get(0).getName());
     }
 
-    // Test 5 — delete throws when not found
+    // Test 6 — update returns updated product
+    @Test
+    void update_ShouldReturnUpdatedProduct() {
+        Product updated = new Product();
+        updated.setName("Shampoo");
+        updated.setDescription("Moisturizing");
+        updated.setPrice(new BigDecimal("12.99"));
+        updated.setCompany(company);
+
+        when(productRepository.findById(1L))
+                .thenReturn(Optional.of(product));
+        when(productRepository.save(any()))
+                .thenReturn(product);
+
+        Product result =
+                productService.update(1L, updated);
+
+        assertNotNull(result);
+        verify(productRepository, times(1))
+                .save(any());
+    }
+
+    // Test 7 — update throws when not found
+    @Test
+    void update_ShouldThrow_WhenNotFound() {
+        when(productRepository.findById(99L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class,
+                () -> productService.update(
+                        99L, product));
+    }
+
+    // Test 8 — deleteById calls repository
+    @Test
+    void deleteById_ShouldDelete() {
+        when(productRepository.existsById(1L))
+                .thenReturn(true);
+        doNothing().when(productRepository)
+                .deleteById(1L);
+
+        productService.deleteById(1L);
+
+        verify(productRepository, times(1))
+                .deleteById(1L);
+    }
+
+    // Test 9 — deleteById throws when not found
     @Test
     void deleteById_ShouldThrow_WhenNotFound() {
-        // GIVEN
         when(productRepository.existsById(99L))
                 .thenReturn(false);
 
-        // WHEN & THEN
-        assertThrows(RuntimeException.class, () ->
-                productService.deleteById(99L));
+        assertThrows(RuntimeException.class,
+                () -> productService
+                        .deleteById(99L));
     }
 }
